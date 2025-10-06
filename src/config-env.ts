@@ -6,6 +6,7 @@ const DOT_ENV = {
   REQUEST_LIMIT: process.env.REQUEST_LIMIT,
   WINDOW_MS: process.env.WINDOW_MS,
   COOLDOWN_MS: process.env.COOLDOWN_MS,
+  MONGO_URI: process,
 };
 
 export default DOT_ENV;

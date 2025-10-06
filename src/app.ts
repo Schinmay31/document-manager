@@ -9,6 +9,7 @@ import {errorHandler} from "./middleware/errorHandler.middleware";
 import DOT_ENV from "./config-env";
 import { rateLimiter } from "./middleware/rateLimitter.middleware";
 import { router as Routes } from "./routes/index";
+import connectDB from "./config/databse.connection";
 
 export class App {
   public app: express.Application;
@@ -18,6 +19,7 @@ export class App {
   constructor() {
     this.app = express();
     this.port = DOT_ENV.PORT || 3000;
+    this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes();
     this.initializeErrorHandling();
@@ -56,6 +58,11 @@ export class App {
     this.app.use(errorHandler);
   }
 
+  private connectToDatabase() {
+    const modelURI =
+      String(DOT_ENV.MONGO_URI) || "mongodb://localhost:27017/document_manager";
+    connectDB(modelURI);
+  }
   private createServer() {
     return http.createServer(this.app);
   }
