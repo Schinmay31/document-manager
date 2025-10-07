@@ -6,8 +6,3 @@ export interface IUser extends Document {
   email: string;
   role: "admin" | "support" | "moderator" | "user";
 }
-
-export interface IAuth {
-  path: RegExp;
-  method: "POST" | "GET" | "PUT" | "PATCH" | "DELETE";
-}
