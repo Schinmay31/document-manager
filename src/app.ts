@@ -10,6 +10,8 @@ import DOT_ENV from "./config-env";
 import { rateLimiter } from "./middleware/rateLimitter.middleware";
 import { router as Routes } from "./routes/index";
 import connectDB from "./config/databse.connection";
+import { authorize } from "./middleware/authorize.middleware";
+import { excludedPaths } from "./constants/auth.constants";
 
 export class App {
   public app: express.Application;
@@ -51,7 +53,8 @@ export class App {
   }
 
   private async initializeRoutes() {
-    this.app.use("/", Routes);
+    this.app.use(authorize(excludedPaths)); // Apply authorization middleware
+    this.app.use("/", Routes); // Main router
   }
 
   private initializeErrorHandling() {
