@@ -6,10 +6,9 @@ import { ERROR_CODES } from "../utils/master-constants";
 import TagsController from "../controllers/tag.controller";
 import DocsController from "../controllers/document.controller";
 import AuditService from "./audit.service";
-import { DOCUMENTACTIONS } from "../constants/document.constant";
+import { AUDIT_ACTIONS } from "../constants/document.constant";
 
 class DocsService {
-    
   // Upload document with auto-create/get tags
   async uploadDocument(payload: {
     userId: string;
@@ -33,7 +32,7 @@ class DocsService {
       primaryTag,
       userId
     );
-    
+
     // Create or get secondary tags
     const secondaryTagIds = [];
     if (secondaryTags && secondaryTags.length > 0) {
@@ -48,7 +47,7 @@ class DocsService {
 
     // right now we are not storing actual documents.
     // just demo content for now
-    // 
+    //
     // Create document
     const doc = await DocsController.createDocument({
       ownerId: userId,
@@ -59,7 +58,10 @@ class DocsService {
     });
 
     // Create document-tag relationships
-    await DocsController.attachPrimaryTag(String(doc._id), String(primaryTagDoc._id));
+    await DocsController.attachPrimaryTag(
+      String(doc._id),
+      String(primaryTagDoc._id)
+    );
 
     for (const tagId of secondaryTagIds) {
       await DocsController.attachSecondaryTag(String(doc._id), String(tagId));
@@ -68,7 +70,7 @@ class DocsService {
     // Audit log
     await AuditService.log({
       userId,
-      action: DOCUMENTACTIONS.CREATE,
+      action: AUDIT_ACTIONS.DOCUMENT_CREATE,
       entityType: "Document",
       entityId: doc._id.toString(),
       metadata: { filename, primaryTag },
@@ -129,7 +131,7 @@ class DocsService {
     // Audit log
     await AuditService.log({
       userId,
-      action: "document_update",
+      action: AUDIT_ACTIONS.DOCUMENT_UPDATE,
       entityType: "Document",
       entityId: docId,
       metadata: updates,
@@ -152,10 +154,7 @@ class DocsService {
     }
 
     // Delete file from disk
-    const filePath = path.join(
-      process.cwd(),
-      doc.fileUrl.replace(/^\//, "")
-    );
+    const filePath = path.join(process.cwd(), doc.fileUrl.replace(/^\//, ""));
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
@@ -167,7 +166,7 @@ class DocsService {
     // Audit log
     await AuditService.log({
       userId,
-      action: "document_delete",
+      action: AUDIT_ACTIONS.DOCUMENT_DELETE,
       entityType: "Document",
       entityId: docId,
       metadata: { filename: doc.filename },
@@ -181,7 +180,11 @@ class DocsService {
   }
 
   // List documents in folder
-  async listDocumentsInFolder(tagName: string, userId: string, userRole: string) {
+  async listDocumentsInFolder(
+    tagName: string,
+    userId: string,
+    userRole: string
+  ) {
     const tag = await TagsController.findTagByName(tagName, userId);
 
     if (!tag) {

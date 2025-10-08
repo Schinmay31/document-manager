@@ -16,8 +16,12 @@ const TaskSchema: Schema = new Schema(
       default: "pending",
     },
     channel: { type: String, enum: ["email", "url", null], default: null },
-    target: { type: String, required: true },
+    target: { type: String, default: null },
     metadata: { type: Schema.Types.Mixed, default: {} },
   },
   { timestamps: true }
 );
+TaskSchema.index({ userId: 1, source: 1, createdAt: 1 });
+
+const TaskModel = mongoose.model<ITask & Document>("Task", TaskSchema);
+export default TaskModel;

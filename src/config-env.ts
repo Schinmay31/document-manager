@@ -9,6 +9,7 @@ const DOT_ENV = {
   MONGO_URI: process.env.MONGO_URI,
   JWT_SECRET: process.env.JWT_SECRET,
   UPLOAD_DIR: process.env.UPLOAD_DIR,
+  API_URL: process.env.API_URL,
 };
 
 export default DOT_ENV;
