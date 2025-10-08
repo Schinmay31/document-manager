@@ -5,5 +5,13 @@ import UserModel from "./user.model";
 import TagModel from "./tag.model";
 import AuditLogModel from "./auditLog.model";
 import UsageModel from "./usage.model";
+import DocumentTagModel from "./documentTag.model";
 
-export { DocumentModel, UserModel, TagModel, AuditLogModel, UsageModel };
+export {
+  DocumentModel,
+  UserModel,
+  TagModel,
+  AuditLogModel,
+  UsageModel,
+  DocumentTagModel,
+};
