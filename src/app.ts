@@ -23,8 +23,8 @@ export class App {
     this.port = DOT_ENV.PORT || 3000;
     this.connectToDatabase();
     this.initializeMiddlewares();
-    this.initializeErrorHandling();
     this.initializeRoutes();
+    this.initializeErrorHandling();
     this.server = this.createServer();
   }
 
@@ -40,14 +40,14 @@ export class App {
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
-    // this.app.use(express.json({ limit: "50mb" }));
-    // this.app.use(
-    //   express.urlencoded({
-    //     limit: "50mb",  
-    //     extended: true,
-    //     parameterLimit: 20000,
-    //   })
-    // );
+    this.app.use(express.json({ limit: "50mb" }));
+    this.app.use(
+      express.urlencoded({
+        limit: "50mb",  
+        extended: true,
+        parameterLimit: 20000,
+      })
+    );
     this.app.use(cookieParser());
     this.app.use(rateLimiter);
   }
