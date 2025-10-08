@@ -8,6 +8,7 @@ import path from "path";
 import DocsController from "../controllers/document.controller";
 import TagsController from "../controllers/tag.controller";
 import DOT_ENV from "../config-env";
+import { AUDIT_ACTIONS } from "../constants/document.constant";
 
 interface ScopePayload {
   type: "folder" | "files";
@@ -58,7 +59,11 @@ class ActionsService {
         const csvDoc = await this.generateCSV(userId, context, userPrompt);
         results.push(csvDoc);
       } else if (action === "make_document") {
-        const textDoc = await this.generateDocument(userId, context, userPrompt);
+        const textDoc = await this.generateDocument(
+          userId,
+          context,
+          userPrompt
+        );
         results.push(textDoc);
       } else {
         throw new AppError(
@@ -83,7 +88,7 @@ class ActionsService {
     // 7. Audit log
     await AuditService.log({
       userId,
-      action: "action_run",
+      action: AUDIT_ACTIONS.ACTION_RUN,
       entityType: "Action",
       entityId: results[0]?._id?.toString() || "unknown",
       metadata: {
@@ -158,7 +163,6 @@ class ActionsService {
     userId: string,
     userRole: string
   ) {
-
     if (scope.type === "folder") {
       return await DocsController.getDocumentsByFolderName(
         scope.name!,
@@ -194,13 +198,14 @@ class ActionsService {
     const csvRows = ["Filename,Type,ContentLength"];
 
     context.forEach((doc) => {
-      csvRows.push(
-        `${doc.filename},${doc.mime},${doc.content.length}`
-      );
+      csvRows.push(`${doc.filename},${doc.mime},${doc.content.length}`);
     });
 
     // Add a summary row based on prompt keywords
-    if (userPrompt.toLowerCase().includes("vendor") || userPrompt.toLowerCase().includes("total")) {
+    if (
+      userPrompt.toLowerCase().includes("vendor") ||
+      userPrompt.toLowerCase().includes("total")
+    ) {
       csvRows.push("");
       csvRows.push("Vendor,Amount");
       // Extract mock vendor data from filenames
@@ -232,8 +237,14 @@ class ActionsService {
     });
 
     // Auto-tag as "generated"
-    const generatedTag = await TagsController.findOrCreateTag("generated", userId);
-    await DocsController.attachPrimaryTag(doc._id.toString(), String(generatedTag._id) );
+    const generatedTag = await TagsController.findOrCreateTag(
+      "generated",
+      userId
+    );
+    await DocsController.attachPrimaryTag(
+      doc._id.toString(),
+      String(generatedTag._id)
+    );
 
     return doc;
   }
@@ -293,24 +304,42 @@ class ActionsService {
     });
 
     // Auto-tag as "generated"
-    const generatedTag = await TagsController.findOrCreateTag("generated", userId);
-    await DocsController.attachPrimaryTag(doc._id.toString(), String(generatedTag._id));
+    const generatedTag = await TagsController.findOrCreateTag(
+      "generated",
+      userId
+    );
+    await DocsController.attachPrimaryTag(
+      doc._id.toString(),
+      String(generatedTag._id)
+    );
 
     return doc;
   }
 
   // Get monthly usage
-  async getMonthlyUsage(userId: string, userRole: string, year?: number, month?: number) {
+  async getMonthlyUsage(
+    userId: string,
+    userRole: string,
+    year?: number,
+    month?: number
+  ) {
     const now = new Date();
     const targetYear = year || now.getFullYear();
     const targetMonth = month || now.getMonth() + 1;
 
     if (userRole === "admin") {
       // Admin can see all users
-      return await UsageController.getAllUsersMonthlyUsage(targetYear, targetMonth);
+      return await UsageController.getAllUsersMonthlyUsage(
+        targetYear,
+        targetMonth
+      );
     } else {
       // User can only see own usage
-      return await UsageController.getMonthlyUsage(userId, targetYear, targetMonth);
+      return await UsageController.getMonthlyUsage(
+        userId,
+        targetYear,
+        targetMonth
+      );
     }
   }
 }

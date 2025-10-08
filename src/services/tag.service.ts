@@ -1,4 +1,5 @@
 // services/tags.service.ts
+import { AUDIT_ACTIONS } from "../constants/document.constant";
 import TagsController from "../controllers/tag.controller";
 import { AppError } from "../utils/AppError";
 import { ERROR_CODES } from "../utils/master-constants";
@@ -30,7 +31,7 @@ class TagsService {
     // Audit log
     await AuditService.log({
       userId,
-      action: "tag_create",
+      action: AUDIT_ACTIONS.TAG_CREATE,
       entityType: "Tag",
       entityId: String(tag._id),
       metadata: { name: tag.name },
@@ -102,7 +103,7 @@ class TagsService {
     // Audit log
     await AuditService.log({
       userId,
-      action: "tag_update",
+      action: AUDIT_ACTIONS.TAG_UPDATE,
       entityType: "Tag",
       entityId: tagId,
       metadata: updates,
@@ -147,7 +148,7 @@ class TagsService {
     // Audit log
     await AuditService.log({
       userId,
-      action: "tag_delete",
+      action: AUDIT_ACTIONS.TAG_DELETE,
       entityType: "Tag",
       entityId: tagId,
       metadata: { name: tag.name, documentsAffected: docCount },

@@ -6,6 +6,7 @@ import TagModel from "./tag.model";
 import AuditLogModel from "./auditLog.model";
 import UsageModel from "./usage.model";
 import DocumentTagModel from "./documentTag.model";
+import TaskModel from "./task.model";
 
 export {
   DocumentModel,
@@ -14,4 +15,5 @@ export {
   AuditLogModel,
   UsageModel,
   DocumentTagModel,
+  TaskModel,
 };
