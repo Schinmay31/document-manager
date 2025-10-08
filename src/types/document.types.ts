@@ -3,6 +3,7 @@ import { IUser as IOwner } from "../types/user.types";
 import { ITag } from "./tag.types";
 
 export interface IDocument extends Document {
+  _id: mongoose.Types.ObjectId;
   ownerId: IOwner["_id"];
   filename: string;
   mime: string;
