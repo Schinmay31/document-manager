@@ -19,28 +19,19 @@ class AuditController {
       metadata: data.metadata || {},
     });
   }
-
   // Find audit logs by user
   static async findByUser(userId: string, limit: number = 100) {
-    return await AuditLogModel.find({ userId })
-      .sort({ at: -1 })
-      .limit(limit)
-      .lean();
+    return await AuditLogModel.find({ userId }).sort({ at: -1 }).limit(limit).lean();
   }
 
   // Find audit logs by action
   static async findByAction(action: string, limit: number = 100) {
-    return await AuditLogModel.find({ action })
-      .sort({ at: -1 })
-      .limit(limit)
-      .lean();
+    return await AuditLogModel.find({ action }).sort({ at: -1 }).limit(limit).lean();
   }
 
   // Find audit logs by entity
   static async findByEntity(entityType: string, entityId: string) {
-    return await AuditLogModel.find({ entityType, entityId })
-      .sort({ at: -1 })
-      .lean();
+    return await AuditLogModel.find({ entityType, entityId }).sort({ at: -1 }).lean();
   }
 
   // Find all audit logs (admin only)

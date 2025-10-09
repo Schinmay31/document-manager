@@ -9,7 +9,6 @@ import webhooksRoutes from "./webhook.routes";
 const router = Router();
 
 router.use("/auth", authRoutes);
-
 router.use("/docs", docsRoutes);
 router.use("/actions", actionsRoutes);
 router.use("/tasks", tasksRoutes);
