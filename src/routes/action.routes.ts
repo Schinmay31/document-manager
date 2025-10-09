@@ -2,6 +2,8 @@
 import express, { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import ActionsService from "../services/actions.service";
+import { runActionValidator, usageQueryValidator } from "../validators/action.validator";
+import validateRequest from "../middleware/validate.middleware";
 
 const actionsRoutes = express.Router();
 
@@ -9,6 +11,8 @@ const actionsRoutes = express.Router();
 // Run scoped action
 actionsRoutes.post(
   "/run",
+  runActionValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -29,6 +33,8 @@ actionsRoutes.post(
 // Get monthly usage
 actionsRoutes.get(
   "/usage/month",
+  usageQueryValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;

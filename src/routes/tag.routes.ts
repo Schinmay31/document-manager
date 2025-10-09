@@ -2,6 +2,8 @@
 import express, { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import TagsService from "../services/tag.service";
+import { createTagValidator, idParamValidator } from "../validators/tag.validator";
+import validateRequest from "../middleware/validate.middleware";
 
 const tagsRoutes = express.Router();
 
@@ -9,8 +11,11 @@ const tagsRoutes = express.Router();
 // Create tag
 tagsRoutes.post(
   "/tags",
+  createTagValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
-    const userId = req.user._id;
+    const userRole = res.locals["userData"].role;
+    const userId = res.locals["userData"].id;
     const { name } = req.body;
 
     const tag = await TagsService.createTag({ name, userId });
@@ -23,8 +28,8 @@ tagsRoutes.post(
 tagsRoutes.get(
   "/tags",
   asyncHandler(async (req: any, res: Response) => {
-    const userId = req.user._id;
-    const userRole = req.user.role;
+    const userRole = res.locals["userData"].role;
+    const userId = res.locals["userData"].id;
 
     const tags = await TagsService.listTags(userId, userRole);
 
@@ -35,9 +40,11 @@ tagsRoutes.get(
 // Get single tag
 tagsRoutes.get(
   "/tags/:id",
+  idParamValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
-    const userId = req.user._id;
-    const userRole = req.user.role;
+    const userRole = res.locals["userData"].role;
+    const userId = res.locals["userData"].id;
     const { id } = req.params;
 
     const tag = await TagsService.getTag(id, userId, userRole);
@@ -49,9 +56,11 @@ tagsRoutes.get(
 // Update tag
 tagsRoutes.put(
   "/tags/:id",
+  idParamValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
-    const userId = req.user._id;
-    const userRole = req.user.role;
+    const userRole = res.locals["userData"].role;
+    const userId = res.locals["userData"].id;
     const { id } = req.params;
     const updates = req.body;
 
@@ -64,9 +73,11 @@ tagsRoutes.put(
 // Delete tag
 tagsRoutes.delete(
   "/tags/:id",
+  idParamValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
-    const userId = req.user._id;
-    const userRole = req.user.role;
+    const userRole = res.locals["userData"].role;
+    const userId = res.locals["userData"].id;
     const { id } = req.params;
 
     const result = await TagsService.deleteTag(id, userId, userRole);
