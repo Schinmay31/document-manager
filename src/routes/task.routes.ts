@@ -4,6 +4,8 @@ import { asyncHandler } from "../utils/asyncHandler";
 import OCRService from "../services/ocr.service";
 import { listTasksValidator, updateTaskStatusValidator } from "../validators/task.validator";
 import validateRequest from "../middleware/validate.middleware";
+import requirePermission from "../middleware/rbac.middleware";
+import { PERMISSIONS } from "../constants/permissions.constants";
 
 const tasksRoutes = express.Router();
 
@@ -12,6 +14,7 @@ tasksRoutes.get(
   "/",
   listTasksValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.TASKS.READ_OWN),
   asyncHandler(async (req: any, res: Response) => {
     const userId = res.locals["userData"].id;
     const userRole = res.locals["userData"].role;
@@ -28,6 +31,9 @@ tasksRoutes.put(
   "/tasks/:id",
   updateTaskStatusValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.TASKS.UPDATE_OWN, {
+    resourceOwnerPath: "params.id",
+  }),
   asyncHandler(async (req: any, res: Response) => {
     const userId = res.locals["userData"].id;
     const userRole = res.locals["userData"].role;

@@ -26,6 +26,7 @@ export const authorize = (excludedPaths: IAuth[]) => {
         if (JWT_SECRET_KEY) {
           try {
             const payload = jwt.verify(token, JWT_SECRET_KEY);
+            console.log("payload: ", payload);
             res.locals["userData"] = payload;
             next();
           } catch (error) {

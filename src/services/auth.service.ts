@@ -10,8 +10,9 @@ class AuthService {
     const tokenPayload = {
       id: user.id,
       email: user.email,
-      role: user.role.name,
+      role: user.role,
     };
+
     const token = JWT.sign(tokenPayload, DOT_ENV.JWT_SECRET!, {
       expiresIn: "8h", // Token expiration time
     });
