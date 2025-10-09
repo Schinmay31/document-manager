@@ -27,9 +27,14 @@ module.exports = [
       '@typescript-eslint': tsPlugin,
     },
     rules: {
+      // keep project permissive for now but pick a few safer rules
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       'no-console': 'off',
+
+      // recommended extra checks
+      '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
+      'consistent-return': 'warn'
     },
   },
 ];
