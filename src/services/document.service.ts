@@ -28,10 +28,7 @@ class DocsService {
     }
 
     // Create or get primary tag
-    const primaryTagDoc = await TagsController.findOrCreateTag(
-      primaryTag,
-      userId
-    );
+    const primaryTagDoc = await TagsController.findOrCreateTag(primaryTag, userId);
 
     // Create or get secondary tags
     const secondaryTagIds = [];
@@ -58,10 +55,7 @@ class DocsService {
     });
 
     // Create document-tag relationships
-    await DocsController.attachPrimaryTag(
-      String(doc._id),
-      String(primaryTagDoc._id)
-    );
+    await DocsController.attachPrimaryTag(String(doc._id), String(primaryTagDoc._id));
 
     for (const tagId of secondaryTagIds) {
       await DocsController.attachSecondaryTag(String(doc._id), String(tagId));
@@ -96,7 +90,7 @@ class DocsService {
   }
 
   // List documents
-  async listDocuments(userId: string, userRole: string, filters: any) {
+  async listDocuments(userId: string, userRole: string, _filters: any) {
     const query: any = {};
 
     // Non-admin can only see their own docs
@@ -109,12 +103,7 @@ class DocsService {
   }
 
   // Update document
-  async updateDocument(
-    docId: string,
-    userId: string,
-    userRole: string,
-    updates: any
-  ) {
+  async updateDocument(docId: string, userId: string, userRole: string, updates: any) {
     const doc = await DocsController.findDocumentById(docId);
 
     if (!doc) {
@@ -180,22 +169,14 @@ class DocsService {
   }
 
   // List documents in folder
-  async listDocumentsInFolder(
-    tagName: string,
-    userId: string,
-    userRole: string
-  ) {
+  async listDocumentsInFolder(tagName: string, userId: string, userRole: string) {
     const tag = await TagsController.findTagByName(tagName, userId);
 
     if (!tag) {
       throw new AppError(ERROR_CODES.NOT_FOUND, "Folder not found");
     }
 
-    const docs = await DocsController.findDocumentsByPrimaryTag(
-      String(tag._id),
-      userId,
-      userRole
-    );
+    const docs = await DocsController.findDocumentsByPrimaryTag(String(tag._id), userId, userRole);
 
     return docs;
   }
@@ -212,17 +193,11 @@ class DocsService {
 
     // Validate scope rule: folder OR files, not both
     if (scope === "folder" && ids && ids.length > 0) {
-      throw new AppError(
-        ERROR_CODES.BAD_REQUEST,
-        "Cannot specify both folder scope and file IDs"
-      );
+      throw new AppError(ERROR_CODES.BAD_REQUEST, "Cannot specify both folder scope and file IDs");
     }
 
     if (scope === "files" && (!ids || ids.length === 0)) {
-      throw new AppError(
-        ERROR_CODES.BAD_REQUEST,
-        "File IDs required for files scope"
-      );
+      throw new AppError(ERROR_CODES.BAD_REQUEST, "File IDs required for files scope");
     }
 
     const results = await DocsController.searchDocuments({

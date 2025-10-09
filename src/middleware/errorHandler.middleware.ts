@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createNamespace, getNamespace } from "cls-hooked";
+import { getNamespace } from "cls-hooked";
 import { HttpStatusCodes as StatusCodes } from "../utils/master-constants";
 import { AppError } from "../utils/AppError";
 
@@ -12,7 +12,8 @@ export const errorHandler = (
   const responseInterceptor = getNamespace("responseInterceptor");
 
   if (!error) {
-    return next(); // Move to the next middleware if no error
+    next(); // Move to the next middleware if no error
+    return;
   }
 
   let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
@@ -43,10 +44,12 @@ export const errorHandler = (
       errorList: errorList,
       statusCode: statusCode,
       status: StatusCodes[StatusCodes.INTERNAL_SERVER_ERROR as any],
+      message,
       reqMethod: responseInterceptor?.get("reqMethod"),
       timeStamp: responseInterceptor?.get("timeStamp"),
       pathUrl: responseInterceptor?.get("pathUrl"),
       apiVersion: `[${responseInterceptor?.get("apiVersion")}]`,
     },
   });
+  return;
 };

@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IUsage } from "../types/usage.types";
 
 const UsageSchema: Schema = new Schema(

@@ -30,8 +30,12 @@ export const rateLimiter = (
 
     if (entry.cooldownTime && currentTime < entry.cooldownTime) {
       const timeLeft = Math.ceil((entry.cooldownTime - currentTime) / 1000);
-      const error = new AppError(ERROR_CODES.TOO_MANY_REQUESTS,`Please try after ${timeLeft} seconds.`);
-      return next(error);
+      const error = new AppError(
+        ERROR_CODES.TOO_MANY_REQUESTS,
+        `Please try after ${timeLeft} seconds.`
+      );
+      next(error);
+      return;
     }
 
     if (currentTime - entry.startTime < WINDOW_MS) {
@@ -40,7 +44,8 @@ export const rateLimiter = (
         entry.count = 0;
         entry.startTime = entry.cooldownTime;
         requestLimits.set(key, entry);
-        return next();
+        next();
+        return;
       } else {
         entry.count++;
       }
@@ -52,7 +57,8 @@ export const rateLimiter = (
     }
 
     requestLimits.set(key, entry);
+    return;
   }
-
   next();
+  return;
 };

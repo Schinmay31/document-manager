@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router } from "express";
 import { errorHandler } from "../middleware/errorHandler.middleware";
 import authRoutes from "./auth.routes";
 import docsRoutes from "./document.routes";

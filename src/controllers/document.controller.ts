@@ -71,12 +71,13 @@ class DocsController {
 
   // Get folders with document counts
   static async getFoldersWithCounts(userId: string, userRole: string) {
-    const matchStage: any = {};
+  const matchStage: any = {};
     if (userRole !== "admin") {
       matchStage.ownerId = new mongoose.Types.ObjectId(userId);
     }
 
-    console.log("matchStage: ", matchStage);
+  // debug: match stage for aggregation
+  // console.log("matchStage: ", matchStage);
 
     const folders = await DocumentModel.aggregate([
       { $match: matchStage },
@@ -206,21 +207,18 @@ class DocsController {
   }) {
     const { userId, userRole, query, scope, ids } = payload;
 
-    const searchRegex = new RegExp(payload.query, "i");
+  const searchRegex = new RegExp(query, "i");
 
-    const matchStage: any = {
-      // 1. Remove $text: { $search: query }
-      $or: [
-        { filename: { $regex: searchRegex } },
-        { textContent: { $regex: searchRegex } },
-      ],
-    };
+  const matchStage: any = {
+    // 1. Remove $text: { $search: query }
+    $or: [{ filename: { $regex: searchRegex } }, { textContent: { $regex: searchRegex } }],
+  };
 
-    // Apply ownership filter
-    if (payload.userRole !== "admin") {
+  // Apply ownership filter
+  if (userRole !== "admin") {
     matchStage.$and = matchStage.$and || []; // Ensure $and exists if needed
-    matchStage.$and.push({ ownerId: new mongoose.Types.ObjectId(payload.userId) });
-}
+    matchStage.$and.push({ ownerId: new mongoose.Types.ObjectId(userId) });
+  }
 
     // Apply scope filter
     if (scope === "files" && ids) {

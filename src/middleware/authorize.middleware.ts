@@ -14,11 +14,12 @@ export const authorize = (excludedPaths: IAuth[]) => {
         excludedPaths.find((ep) => {
           return (
             (ep.method === req.method && ep.path.test(req.url)) ||
-            req.url.includes("public") 
+            req.url.includes("public")
           );
         })
       ) {
-        return next();
+        next();
+        return;
       }
       const token = req.headers.authorization?.split(" ")[1];
       if (token) {
@@ -26,14 +27,11 @@ export const authorize = (excludedPaths: IAuth[]) => {
         if (JWT_SECRET_KEY) {
           try {
             const payload = jwt.verify(token, JWT_SECRET_KEY);
-            console.log("payload: ", payload);
             res.locals["userData"] = payload;
             next();
-          } catch (error) {
-            throw new AppError(
-              ERROR_CODES.UNAUTHORIZED,
-              AUTHORIZE.SESSION_EXPIRED
-            );
+            return;
+          } catch {
+            throw new AppError(ERROR_CODES.UNAUTHORIZED, AUTHORIZE.SESSION_EXPIRED);
           }
         } else {
           throw new AppError(
@@ -47,9 +45,10 @@ export const authorize = (excludedPaths: IAuth[]) => {
           AUTHORIZE.PERMISSION_NOT_GRANTED
         );
       }
-    } catch (error) {
-      console.log("Error: ", error);
-      next(error);
+    } catch (err) {
+      // forward error to the centralized handler
+      next(err);
+      return;
     }
   };
 };

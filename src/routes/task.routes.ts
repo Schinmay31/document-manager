@@ -18,11 +18,12 @@ tasksRoutes.get(
   asyncHandler(async (req: any, res: Response) => {
     const userId = res.locals["userData"].id;
     const userRole = res.locals["userData"].role;
-    const filters = req.query;
+    const _filters = req.query;
 
-    const tasks = await OCRService.getTasks(userId, userRole, filters);
+    const tasks = await OCRService.getTasks(userId, userRole, _filters);
 
     res.json({ success: true, data: tasks });
+    return;
   })
 );
 
@@ -47,14 +48,9 @@ tasksRoutes.put(
       });
     }
 
-    const task = await OCRService.updateTaskStatus(
-      id,
-      userId,
-      userRole,
-      status
-    );
-
+    const task = await OCRService.updateTaskStatus(id, userId, userRole, status);
     res.json({ success: true, data: task });
+    return;
   })
 );
 

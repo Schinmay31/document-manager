@@ -15,27 +15,31 @@ interface RequirePermissionOptions {
 }
 
 // global Middleware to check if user has the required permission 
-export const requirePermission = (
-    permission: string,
-    options?: RequirePermissionOptions
-) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        const user= res.locals["userData"];
-        if (!user) {
-            return next(new AppError(ERROR_CODES.FORBIDDEN, "Unauthorized"));
-        }
+export const requirePermission = (permission: string, _options?: RequirePermissionOptions) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const user = res.locals["userData"];
+    if (!user) {
+      next(new AppError(ERROR_CODES.FORBIDDEN, "Unauthorized"));
+      return;
+    }
 
+    const role: string = user.role;
 
-        const role: string = user.role;
+    // admin has all permissions
+    if (hasPermission(role, "*")) {
+      next();
+      return;
+    }
 
-        // admin has all permissions
-        if (hasPermission(role, "*")) return next();
+    // check direct permission
+    if (hasPermission(role, permission)) {
+      next();
+      return;
+    }
 
-        // check direct permission
-        if (hasPermission(role, permission)) return next();
-
-        return next(new AppError(ERROR_CODES.FORBIDDEN, "Insufficient permissions"));
-    };
-}
+    next(new AppError(ERROR_CODES.FORBIDDEN, "Insufficient permissions"));
+    return;
+  };
+};
 
 export default requirePermission;

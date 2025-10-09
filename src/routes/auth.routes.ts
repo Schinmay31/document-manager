@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import AuthService from "../services/auth.service";
 import { loginValidator } from "../validators/auth.validator";

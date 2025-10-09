@@ -16,7 +16,7 @@ tagsRoutes.post(
   validateRequest,
   requirePermission(PERMISSIONS.TAGS.CREATE),
   asyncHandler(async (req: any, res: Response) => {
-    const userRole = res.locals["userData"].role;
+  const _userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
     const { name } = req.body;
 

@@ -32,10 +32,12 @@ const upload = multer({
     const mimetype = allowedTypes.test(file.mimetype);
 
     if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error("Invalid file type"));
+      cb(null, true);
+      return;
     }
+
+    cb(new Error("Invalid file type"));
+    return;
   },
 });
 

@@ -1,13 +1,16 @@
 // routes/docs.routes.ts
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import upload from "../config/multer.config";
 import DocsService from "../services/document.service";
-import { uploadDocumentValidator, searchDocumentsValidator, idParamValidator } from "../validators/document.validator";
+import {
+  uploadDocumentValidator,
+  searchDocumentsValidator,
+  idParamValidator,
+} from "../validators/document.validator";
 import validateRequest from "../middleware/validate.middleware";
 import requirePermission from "../middleware/rbac.middleware";
 import { PERMISSIONS } from "../constants/permissions.constants";
-import multer from "multer";
 
 const docsRoutes = express.Router();
 
@@ -22,14 +25,21 @@ docsRoutes.post(
     const userId = res.locals["userData"].id;
 
     let { primaryTag, secondaryTags } = req.body;
-    secondaryTags: secondaryTags ? JSON.parse(secondaryTags) : [];
+    // normalize secondaryTags (may come as JSON string)
+    if (typeof secondaryTags === "string") {
+      try {
+        secondaryTags = JSON.parse(secondaryTags);
+      } catch {
+        secondaryTags = [];
+      }
+    }
     const file = req.files["file"]?.[0];
 
     const doc = await DocsService.uploadDocument({
       userId,
       filename: file?.originalname || "untitled",
       primaryTag,
-      secondaryTags: secondaryTags ? JSON.parse(secondaryTags) : [],
+      secondaryTags: Array.isArray(secondaryTags) ? secondaryTags : [],
       file,
     });
 

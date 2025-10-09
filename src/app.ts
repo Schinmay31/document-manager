@@ -54,7 +54,7 @@ export class App {
 
   private async initializeRoutes() {
     this.app.use(authorize(excludedPaths)); // Apply authorization middleware
-    this.app.use("/", Routes); // Main router
+    this.app.use("/v1", Routes); // Main router
   }
 
   private initializeErrorHandling() {

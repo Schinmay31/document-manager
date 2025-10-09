@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IDocumentTag } from "../types/document.types";
 
 const DocumentTagSchema: Schema = new Schema(
@@ -17,8 +17,5 @@ const DocumentTagSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
-const DocumentTagModel = mongoose.model<IDocumentTag>(
-  "DocumentTag",
-  DocumentTagSchema
-);
+const DocumentTagModel = mongoose.model<IDocumentTag>("DocumentTag", DocumentTagSchema);
 export default DocumentTagModel;
