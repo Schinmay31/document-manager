@@ -4,15 +4,17 @@ import { asyncHandler } from "../utils/asyncHandler";
 import ActionsService from "../services/actions.service";
 import { runActionValidator, usageQueryValidator } from "../validators/action.validator";
 import validateRequest from "../middleware/validate.middleware";
+import requirePermission from "../middleware/rbac.middleware";
+import { PERMISSIONS } from "../constants/permissions.constants";
 
 const actionsRoutes = express.Router();
-
 
 // Run scoped action
 actionsRoutes.post(
   "/run",
   runActionValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.ACTIONS.RUN),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -35,6 +37,7 @@ actionsRoutes.get(
   "/usage/month",
   usageQueryValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.USAGE.VIEW_OWN),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;

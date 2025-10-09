@@ -4,15 +4,17 @@ import { asyncHandler } from "../utils/asyncHandler";
 import TagsService from "../services/tag.service";
 import { createTagValidator, idParamValidator } from "../validators/tag.validator";
 import validateRequest from "../middleware/validate.middleware";
+import requirePermission from "../middleware/rbac.middleware";
+import { PERMISSIONS } from "../constants/permissions.constants";
 
 const tagsRoutes = express.Router();
-
 
 // Create tag
 tagsRoutes.post(
   "/tags",
   createTagValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.TAGS.CREATE),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -27,6 +29,7 @@ tagsRoutes.post(
 // List all tags
 tagsRoutes.get(
   "/tags",
+  requirePermission(PERMISSIONS.TAGS.READ_ANY),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -42,6 +45,9 @@ tagsRoutes.get(
   "/tags/:id",
   idParamValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.TAGS.READ_OWN, {
+    resourceOwnerPath: "params.id",
+  }),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -58,6 +64,9 @@ tagsRoutes.put(
   "/tags/:id",
   idParamValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.TAGS.UPDATE_OWN, {
+    resourceOwnerPath: "params.id",
+  }),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -75,6 +84,9 @@ tagsRoutes.delete(
   "/tags/:id",
   idParamValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.TAGS.DELETE_OWN, {
+    resourceOwnerPath: "params.id",
+  }),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;

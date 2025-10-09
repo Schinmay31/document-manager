@@ -5,6 +5,8 @@ import upload from "../config/multer.config";
 import DocsService from "../services/document.service";
 import { uploadDocumentValidator, searchDocumentsValidator, idParamValidator } from "../validators/document.validator";
 import validateRequest from "../middleware/validate.middleware";
+import requirePermission from "../middleware/rbac.middleware";
+import { PERMISSIONS } from "../constants/permissions.constants";
 import multer from "multer";
 
 const docsRoutes = express.Router();
@@ -15,6 +17,7 @@ docsRoutes.post(
   upload.fields([{ name: "file" }]),
   uploadDocumentValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.DOCUMENTS.CREATE),
   asyncHandler(async (req: any, res: Response) => {
     const userId = res.locals["userData"].id;
 
@@ -39,6 +42,7 @@ docsRoutes.get(
   "/search",
   searchDocumentsValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.DOCUMENTS.READ_OWN),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -59,6 +63,7 @@ docsRoutes.get(
 // List folders (all primary tags with doc counts)
 docsRoutes.get(
   "/folders",
+  requirePermission(PERMISSIONS.DOCUMENTS.READ_OWN),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -74,6 +79,9 @@ docsRoutes.get(
   "/:id",
   idParamValidator,
   validateRequest,
+  requirePermission(PERMISSIONS.DOCUMENTS.READ_OWN, {
+    resourceOwnerPath: "params.id",
+  }),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -88,6 +96,7 @@ docsRoutes.get(
 // List all documents (filtered by user)
 docsRoutes.get(
   "/",
+  requirePermission(PERMISSIONS.DOCUMENTS.READ_OWN),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
@@ -113,11 +122,10 @@ docsRoutes.get(
 //   })
 // );
 
-
-
 // List documents in a folder (by primary tag)
 docsRoutes.get(
   "/folders/:tag/docs",
+  requirePermission(PERMISSIONS.DOCUMENTS.READ_OWN),
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
