@@ -3,22 +3,23 @@ import express, { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import upload from "../config/multer.config";
 import DocsService from "../services/document.service";
+import { uploadDocumentValidator, searchDocumentsValidator, idParamValidator } from "../validators/document.validator";
+import validateRequest from "../middleware/validate.middleware";
 import multer from "multer";
-
-
 
 const docsRoutes = express.Router();
 
 // Upload document with tags
 docsRoutes.post(
   "/",
-  upload.fields([{name: 'file'}]),
+  upload.fields([{ name: "file" }]),
+  uploadDocumentValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
-
     const userId = res.locals["userData"].id;
 
-    let {  primaryTag, secondaryTags } = req.body;
-    secondaryTags: secondaryTags ? JSON.parse(secondaryTags) : []
+    let { primaryTag, secondaryTags } = req.body;
+    secondaryTags: secondaryTags ? JSON.parse(secondaryTags) : [];
     const file = req.files["file"]?.[0];
 
     const doc = await DocsService.uploadDocument({
@@ -36,11 +37,12 @@ docsRoutes.post(
 // Search documents
 docsRoutes.get(
   "/search",
+  searchDocumentsValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
     const { q, scope, ids } = req.query;
-    console.log('req.query: ', req.query);
 
     const results = await DocsService.searchDocuments({
       userId,
@@ -58,7 +60,7 @@ docsRoutes.get(
 docsRoutes.get(
   "/folders",
   asyncHandler(async (req: any, res: Response) => {
-   const userRole = res.locals["userData"].role;
+    const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
 
     const folders = await DocsService.listFolders(userId, userRole);
@@ -70,8 +72,9 @@ docsRoutes.get(
 // Get single document
 docsRoutes.get(
   "/:id",
+  idParamValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
-    
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
     const { id } = req.params;
@@ -95,21 +98,6 @@ docsRoutes.get(
     res.json({ success: true, data: docs });
   })
 );
-
-// // Update document
-// docsRoutes.put(
-//   "/:id",
-//   asyncHandler(async (req: any, res: Response) => {
-//     const userId = req.user._id;
-//     const userRole = req.user.role;
-//     const { id } = req.params;
-//     const updates = req.body;
-
-//     const doc = await DocsService.updateDocument(id, userId, userRole, updates);
-
-//     res.json({ success: true, data: doc });
-//   })
-// );
 
 // Delete document
 // docsRoutes.delete(
