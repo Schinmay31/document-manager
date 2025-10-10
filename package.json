@@ -12,7 +12,7 @@
     "lint": "npx eslint src/**/*.ts",
     "lint:fix": "npx eslint src/**/*.ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "seed": "ts-node scripts/seed.ts",
+    "seed": "node dist/scripts/seed.js",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",

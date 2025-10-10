@@ -7,10 +7,7 @@ import fs from "fs";
 dotenv.config();
 
 // Import models
-import UserModel from "../src/models/User.model";
-import DocumentModel from "../src/models/Document.model";
-import TagModel from "../src/models/Tag.model";
-import DocumentTagModel from "../src/models/DocumentTag.model";
+import {UserModel,DocumentModel,TagModel,DocumentTagModel } from "../models/index";
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/docmanager";
 
