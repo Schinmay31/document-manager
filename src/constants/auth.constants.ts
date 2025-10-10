@@ -1,9 +1,11 @@
 import { pathToRegexp } from "path-to-regexp";
 
+// Define paths that do not require authorization
 export const excludedPaths: {
   method: "POST" | "GET" | "PUT" | "PATCH" | "DELETE";
   path: RegExp;
-}[] = [{ method: "POST", path: pathToRegexp("/auth/login").regexp }];
+}[] = [{ method: "POST", path: pathToRegexp("/v1/auth/login").regexp }];
+
 
 export const AUTHORIZE = {
   PERMISSION_NOT_GRANTED: "PERMISSION NOT GRANTED TO ACCESS THIS URL",

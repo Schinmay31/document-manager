@@ -57,6 +57,8 @@ export const rateLimiter = (
     }
 
     requestLimits.set(key, entry);
+    // allow the request to continue
+    next();
     return;
   }
   next();
