@@ -169,14 +169,9 @@ class DocsService {
   }
 
   // List documents in folder
-  async listDocumentsInFolder(tagName: string, userId: string, userRole: string) {
-    const tag = await TagsController.findTagByName(tagName, userId);
+  async listDocumentsInFolder(tagId: string, userId: string, userRole: string) {
 
-    if (!tag) {
-      throw new AppError(ERROR_CODES.NOT_FOUND, "Folder not found");
-    }
-
-    const docs = await DocsController.findDocumentsByPrimaryTag(String(tag._id), userId, userRole);
+    const docs = await DocsController.findDocumentsByPrimaryTag(tagId, userId, userRole);
 
     return docs;
   }

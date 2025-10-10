@@ -26,3 +26,7 @@ export const searchDocumentsValidator = [
 ];
 
 export const idParamValidator = [param("id").isString().notEmpty().withMessage("id is required")];
+
+export const tagParamValidator = [
+  param("tag").isMongoId().withMessage("tag must be a valid Mongo ObjectId"),
+];

@@ -7,6 +7,7 @@ import {
   uploadDocumentValidator,
   searchDocumentsValidator,
   idParamValidator,
+  tagParamValidator,
 } from "../validators/document.validator";
 import validateRequest from "../middleware/validate.middleware";
 import requirePermission from "../middleware/rbac.middleware";
@@ -133,9 +134,12 @@ docsRoutes.get(
 // );
 
 // List documents in a folder (by primary tag)
+// use tagId instead of tag name cause multiple tags can have same name of different users and admin can see all. so it will cause ambiguity
 docsRoutes.get(
   "/folders/:tag/docs",
   requirePermission(PERMISSIONS.DOCUMENTS.READ_OWN),
+  tagParamValidator,
+  validateRequest,
   asyncHandler(async (req: any, res: Response) => {
     const userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
