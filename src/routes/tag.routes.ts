@@ -2,7 +2,7 @@
 import express, { Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import TagsService from "../services/tag.service";
-import { createTagValidator, idParamValidator } from "../validators/tag.validator";
+import { createTagValidator } from "../validators/tag.validator";
 import validateRequest from "../middleware/validate.middleware";
 import requirePermission from "../middleware/rbac.middleware";
 import { PERMISSIONS } from "../constants/permissions.constants";
