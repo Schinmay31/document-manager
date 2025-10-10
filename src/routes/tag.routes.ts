@@ -16,7 +16,7 @@ tagsRoutes.post(
   validateRequest,
   requirePermission(PERMISSIONS.TAGS.CREATE),
   asyncHandler(async (req: any, res: Response) => {
-  const _userRole = res.locals["userData"].role;
+    const _userRole = res.locals["userData"].role;
     const userId = res.locals["userData"].id;
     const { name } = req.body;
 
@@ -25,38 +25,4 @@ tagsRoutes.post(
     res.status(201).json({ success: true, data: tag });
   })
 );
-
-// List all tags
-tagsRoutes.get(
-  "/tags",
-  requirePermission(PERMISSIONS.TAGS.READ_ANY),
-  asyncHandler(async (req: any, res: Response) => {
-    const userRole = res.locals["userData"].role;
-    const userId = res.locals["userData"].id;
-
-    const tags = await TagsService.listTags(userId, userRole);
-
-    res.json({ success: true, data: tags });
-  })
-);
-
-// Get single tag
-tagsRoutes.get(
-  "/tags/:id",
-  idParamValidator,
-  validateRequest,
-  requirePermission(PERMISSIONS.TAGS.READ_OWN, {
-    resourceOwnerPath: "params.id",
-  }),
-  asyncHandler(async (req: any, res: Response) => {
-    const userRole = res.locals["userData"].role;
-    const userId = res.locals["userData"].id;
-    const { id } = req.params;
-
-    const tag = await TagsService.getTag(id, userId, userRole);
-
-    res.json({ success: true, data: tag });
-  })
-);
-
 export default tagsRoutes;
