@@ -32,6 +32,9 @@ export const PERMISSIONS = {
     UPDATE_ANY: "tasks:update:any",
     UPDATE_OWN: "tasks:update:own",
   },
+  METRICS: {
+    READ: "metrics:read",
+  },
 };
 
 // Roles and permission mapping
@@ -43,6 +46,7 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     PERMISSIONS.TAGS.READ_ANY,
     PERMISSIONS.TASKS.READ_ANY,
     PERMISSIONS.USAGE.VIEW_ANY,
+    PERMISSIONS.METRICS.READ,
   ],
   moderator: [
     // read-only across core resources
@@ -50,6 +54,7 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     PERMISSIONS.TAGS.READ_ANY,
     PERMISSIONS.TASKS.READ_ANY,
     PERMISSIONS.USAGE.VIEW_ANY,
+    PERMISSIONS.METRICS.READ,
   ],
   user: [
     // can create documents and tags and act on own resources

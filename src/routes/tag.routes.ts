@@ -59,43 +59,4 @@ tagsRoutes.get(
   })
 );
 
-// Update tag
-tagsRoutes.put(
-  "/tags/:id",
-  idParamValidator,
-  validateRequest,
-  requirePermission(PERMISSIONS.TAGS.UPDATE_OWN, {
-    resourceOwnerPath: "params.id",
-  }),
-  asyncHandler(async (req: any, res: Response) => {
-    const userRole = res.locals["userData"].role;
-    const userId = res.locals["userData"].id;
-    const { id } = req.params;
-    const updates = req.body;
-
-    const tag = await TagsService.updateTag(id, userId, userRole, updates);
-
-    res.json({ success: true, data: tag });
-  })
-);
-
-// Delete tag
-tagsRoutes.delete(
-  "/tags/:id",
-  idParamValidator,
-  validateRequest,
-  requirePermission(PERMISSIONS.TAGS.DELETE_OWN, {
-    resourceOwnerPath: "params.id",
-  }),
-  asyncHandler(async (req: any, res: Response) => {
-    const userRole = res.locals["userData"].role;
-    const userId = res.locals["userData"].id;
-    const { id } = req.params;
-
-    const result = await TagsService.deleteTag(id, userId, userRole);
-
-    res.json({ success: true, data: result });
-  })
-);
-
 export default tagsRoutes;

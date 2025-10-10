@@ -4,6 +4,4 @@ export const createTagValidator = [
   body("name").isString().notEmpty().withMessage("Tag name is required."),
 ];
 
-export const idParamValidator = [
-  param("id").isString().notEmpty().withMessage("id is required."),
-];
+export const idParamValidator = [param("id").isMongoId().withMessage("id must be a valid Mongo ObjectId")];
