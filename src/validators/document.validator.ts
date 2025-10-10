@@ -12,7 +12,10 @@ export const uploadDocumentValidator = [
         try {
           const parsed = JSON.parse(value);
           return Array.isArray(parsed);
-        } catch (e) {}
+        } catch (e) {
+          // not JSON
+          return false;
+        }
       }
       return false;
     })

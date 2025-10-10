@@ -266,7 +266,7 @@ async function seed() {
 
     const users = await seedUsers();
     const tags = await seedTags(users);
-    const documents = await seedDocuments(users, tags);
+    await seedDocuments(users, tags);
 
     await displaySummary(users);
 
