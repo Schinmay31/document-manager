@@ -1,16 +1,18 @@
-# .dockerignore
 node_modules
-npm-debug.log
 dist
 .env
-.env.local
+.env
 .git
 .gitignore
-README.md
 uploads/*
 !uploads/.gitkeep
 coverage
+tests
 .vscode
 .idea
 *.log
+npm-debug.log
 .DS_Store
+yarn-error.log
+.pnp.*
+.cache
