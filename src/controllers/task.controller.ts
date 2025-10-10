@@ -31,18 +31,6 @@ class TaskController {
     return await TaskModel.find(query).sort({ createdAt: -1 }).lean();
   }
 
-  // Update task status
-  static async updateTaskStatus(
-    taskId: string,
-    status: "pending" | "completed" | "failed"
-  ) {
-    return await TaskModel.findByIdAndUpdate(
-      taskId,
-      { status },
-      { new: true }
-    ).lean();
-  }
-
   // Count tasks by source for today (rate limiting)
   static async countTasksBySourceToday(userId: string, source: string) {
     const today = new Date();

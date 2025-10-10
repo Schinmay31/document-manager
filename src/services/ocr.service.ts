@@ -183,43 +183,12 @@ class OCRService {
 
   // Get tasks for user
   async getTasks(userId: string, userRole: string, filters: any = {}) {
+    // if user is admin, get all tasks, else only own tasks
     if (userRole === "admin") {
       return await TaskController.findAllTasks(filters);
     } else {
       return await TaskController.findTasksByUser(userId, filters);
     }
-  }
-
-  // Update task status
-  async updateTaskStatus(
-    taskId: string,
-    userId: string,
-    userRole: string,
-    status: "pending" | "completed" | "failed"
-  ) {
-    const task = await TaskController.findTaskById(taskId);
-
-    if (!task) {
-      throw new AppError(ERROR_CODES.NOT_FOUND, "Task not found");
-    }
-
-    // Check ownership (admin can update any task)
-    if (userRole !== "admin" && task.userId.toString() !== userId) {
-      throw new AppError(ERROR_CODES.FORBIDDEN, "Access denied");
-    }
-
-    const updatedTask = await TaskController.updateTaskStatus(taskId, status);
-
-    // Audit log
-    await AuditService.log({
-      userId,
-      action: AUDIT_ACTIONS.TASK_UPDATE,
-      entityType: "Task",
-      entityId: taskId,
-      metadata: { status },
-    });
-
-    return updatedTask;
   }
 }
 
