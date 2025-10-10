@@ -71,54 +71,30 @@ class DocsController {
 
   // Get folders with document counts
   static async getFoldersWithCounts(userId: string, userRole: string) {
-  const matchStage: any = {};
+    // Fetch tags visible to this user (owner filter for non-admins)
+    const tagQuery: any = {};
     if (userRole !== "admin") {
-      matchStage.ownerId = new mongoose.Types.ObjectId(userId);
+      tagQuery.ownerId = userId;
     }
 
-  // debug: match stage for aggregation
-  // console.log("matchStage: ", matchStage);
+    const tags = await TagModel.find(tagQuery).lean();
 
-    const folders = await DocumentModel.aggregate([
-      { $match: matchStage },
-      {
-        $lookup: {
-          from: "documenttags",
-          localField: "_id",
-          foreignField: "documentId",
-          as: "tags",
-        },
-      },
-      { $unwind: "$tags" },
-      { $match: { "tags.isPrimary": true } },
-      {
-        $lookup: {
-          from: "tags",
-          localField: "tags.tagId",
-          foreignField: "_id",
-          as: "tagInfo",
-        },
-      },
-      { $unwind: "$tagInfo" },
-      {
-        $group: {
-          _id: {
-            name: "$tagInfo.name", // Group by tag name
-            id: "$tagInfo._id", // Group by tag ID as well
-          },
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $project: {
-          name: "$_id.name", // Project the name from the new _id structure
-          tagId: "$_id.id", // Project the tagId from the new _id structure
-          count: 1,
-          _id: 0,
-        },
-      },
-      { $sort: { name: 1 } },
-    ]);
+    // For each tag count documents where this tag is primary
+    const counts = await Promise.all(
+      tags.map(async (t: any) => {
+        const cnt = await DocumentTagModel.countDocuments({
+          tagId: t._id,
+          isPrimary: true,
+        });
+        return { tag: t, count: cnt };
+      })
+    );
+
+    // Filter out tags with zero primary documents and return shape { name, tagId, count }
+    const folders = counts
+      .filter((c) => c.count > 0)
+      .map((c) => ({ name: c.tag.name, tagId: c.tag._id, count: c.count }))
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     return folders;
   }
