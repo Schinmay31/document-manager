@@ -12,7 +12,7 @@ Lightweight document-management API built with Node.js + TypeScript, Express and
 - Project root: `src/`
 - Environment example: `.env.example`
 - Docker: `docker-compose.yml`, `Dockerfile`
-- Scripts: see `package.json` (`dev`, `build`, `start`, `test`, `lint`, `docker:*`)
+-  Scripts: see package.json (dev, build, start, test, lint, seed, docker:*)
 
 ## Setup & run
 
@@ -46,7 +46,6 @@ npm test
 ```bash
 npm run lint
 npm run lint:fix
-npm run format
 ```
 
 5. Using Docker 
@@ -57,11 +56,8 @@ Build and start with Docker Compose:
 docker-compose build
 docker-compose up -d
 docker-compose logs -f api
+docker-compose down
 ```
-
-Troubleshooting: If `docker-compose build` fails with `failed to read dockerfile` when your repo is on OneDrive, try:
-- Restart Docker Desktop and retry the build.
-- Move the repo to a non-OneDrive path such as `C:\dev\document-manager` and build again.
 
 ## Environment
 
@@ -81,23 +77,13 @@ Authentication
 ```bash
 curl -s -X POST http://localhost:3000/v1/auth/login \
 	-H 'Content-Type: application/json' \
-	-d '{"email":"user@example.com","password":"password"}'
+	-d '{"email":"user@example.com"}'
 ```
 
 Use the returned token in Authorization header for protected endpoints:
 
 `Authorization: Bearer <token>`
 
-Tags
-
-- Create tag
-
-```bash
-curl -X POST http://localhost:3000/v1/tags \
-	-H "Authorization: Bearer $TOKEN" \
-	-H "Content-Type: application/json" \
-	-d '{"name":"invoices"}'
-```
 
 Documents
 
@@ -156,22 +142,23 @@ Notes
 
 - Tradeoffs
 	- File uploads are stored on local disk (simple, low-cost). For multiple replicas or cloud deployments, object storage (S3) is preferred.
-	- RBAC is role + permission based but does not include a dedicated owner-resolver middleware (ownership checks occur in services). This is simpler and safer but duplicates checks in services.
+	- RBAC is role + permission based but does not include a dedicated models(data is coming from constants). (ownership checks occur in services). This is simpler and safer but duplicates checks in services.
 	- No background queue yet for heavy OCR or indexing tasks — currently performed synchronously or via webhooks.
 
 ## What I'd do next with more time
 
 1. Move uploads to object storage (S3) + signed URLs and remove local disk dependency.
 2. Add an owner-resolver middleware to centralize `:own` checks and short-circuit requests earlier.
-3. Add background workers (Bull/Redis) for OCR, indexing and large file processing.
-4. Add end-to-end tests and a small CI pipeline (GitHub Actions) that runs lint, tests and builds the Docker image.
-5. Add rate-limit per-user and per-route fine-tuning, and implement caching for metrics endpoints.
-6. Add pagination and ACL-aware search (inc. full-text index and relevance tuning).
+3. dedicated models like permission, role, user-roles to handle RBAC more dynamically.
+4. Add background workers (Bull/Redis) for OCR, indexing and large file processing.
+5. Add end-to-end tests and a small CI pipeline (GitHub Actions) that runs lint, tests and builds the Docker image.
+6. Add rate-limit per-user and per-route fine-tuning, and implement caching for metrics endpoints.
+7. Add pagination to all get routes
 
 ## Timeline
 
 - Start date: 2025-10-05
-- Finish date: 2025-10-10
+- Finish date: 2025-10-11
 
 ## Useful commands
 
