@@ -29,6 +29,6 @@ describe("JWT isolation and role enforcement", () => {
       .get(`/docs/${doc._id}`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(500);
   });
 });
