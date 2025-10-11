@@ -31,6 +31,12 @@ export const requirePermission = (permission: string, _options?: RequirePermissi
       return;
     }
 
+    // special-case: allow moderator and support to read own resources
+    if (permission == "documents:read:own" && (role == "moderator" || role == "support")) {
+      next();
+      return;
+    }
+
     // check direct permission
     if (hasPermission(role, permission)) {
       next();

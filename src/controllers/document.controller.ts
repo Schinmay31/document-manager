@@ -73,7 +73,7 @@ class DocsController {
   static async getFoldersWithCounts(userId: string, userRole: string) {
     // Fetch tags visible to this user (owner filter for non-admins)
     const tagQuery: any = {};
-    if (userRole !== "admin") {
+    if (userRole !== "admin" && userRole !== "moderator" && userRole !== "support") {
       tagQuery.ownerId = userId;
     }
 

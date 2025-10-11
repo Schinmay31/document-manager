@@ -82,7 +82,12 @@ class DocsService {
     }
 
     // Check ownership (admin can access all)
-    if (userRole !== "admin" && doc.ownerId.toString() !== userId) {
+    if (
+      userRole !== "admin" &&
+      userRole !== "moderator" &&
+      userRole !== "support" &&
+      doc.ownerId.toString() !== userId
+    ) {
       throw new AppError(ERROR_CODES.FORBIDDEN, "Access denied");
     }
 
@@ -94,7 +99,8 @@ class DocsService {
     const query: any = {};
 
     // Non-admin can only see their own docs
-    if (userRole !== "admin") {
+    if (userRole !== "admin" && userRole !== "moderator" &&
+      userRole !== "support" ) {
       query.ownerId = userId;
     }
 
