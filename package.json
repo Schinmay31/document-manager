@@ -12,12 +12,11 @@
     "lint": "npx eslint src/**/*.ts",
     "lint:fix": "npx eslint src/**/*.ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "seed": "node dist/scripts/seed.js",
+    "seed": "ts-node scripts/seed.ts",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f api",
-    "docker:seed": "docker-compose exec api npm run seed"
+    "docker:logs": "docker-compose logs -f api"
   },
   "keywords": [
     "document-management",
